@@ -1,0 +1,41 @@
+using RepositoryContracts;
+using Entities;
+
+namespace CLI;
+
+public class CreateUserView
+{
+    private readonly IUserRepository _users;
+
+    public CreateUserView(IUserRepository users) => _users = users;
+
+    public async Task ShowAsync()
+    {
+        Console.Write("Username: ");
+        var username = (Console.ReadLine() ?? "").Trim();
+
+        Console.Write("Password: ");
+        var password = (Console.ReadLine() ?? "").Trim();
+
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            Console.WriteLine("Username and password are required.");
+            return;
+        }
+
+        
+        var exists = _users.GetManyAsync().Any(u =>
+            string.Equals(u.UserName, username, StringComparison.OrdinalIgnoreCase));
+        if (exists)
+        {
+            Console.WriteLine("Username already taken.");
+            return;
+        }
+
+        var user = new User { UserName = username, Password = password };
+        user = await _users.AddAsync(user);
+
+        Console.WriteLine($" User created with ID {user.Id}");
+    }
+}
+

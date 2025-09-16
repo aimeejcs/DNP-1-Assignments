@@ -5,7 +5,7 @@ namespace InMemoryRepositories;
 
 public class UserInMemoryRepository : IUserRepository
 {
-
+   
     private List<User> users;
 
     public UserInMemoryRepository()

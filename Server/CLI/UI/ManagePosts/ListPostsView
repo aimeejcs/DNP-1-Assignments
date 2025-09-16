@@ -1,0 +1,26 @@
+using RepositoryContracts;
+
+namespace CLI;
+
+public class ListPostsView
+{
+    private readonly IPostRepository _posts;
+
+    public ListPostsView(IPostRepository posts) => _posts = posts;
+
+    public Task ShowAsync()
+    {
+        var all = _posts.GetManyAsync().ToList();
+        if (all.Count == 0)
+        {
+            Console.WriteLine("(no posts)");
+            return Task.CompletedTask;
+        }
+
+        Console.WriteLine("\nID\tTitle");
+        foreach (var p in all)
+            Console.WriteLine($"{p.Id}\t{p.Title}");
+
+        return Task.CompletedTask;
+    }
+}

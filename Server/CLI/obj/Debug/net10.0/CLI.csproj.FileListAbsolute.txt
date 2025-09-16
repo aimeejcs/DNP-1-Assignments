@@ -1,0 +1,6 @@
+D:\VIA university\Software engineering\Semester 3\DNP-1\DNP Assignments\Server\CLI\obj\Debug\net10.0\CLI.csproj.AssemblyReference.cache
+D:\VIA university\Software engineering\Semester 3\DNP-1\DNP Assignments\Server\CLI\obj\Debug\net10.0\CLI.GeneratedMSBuildEditorConfig.editorconfig
+D:\VIA university\Software engineering\Semester 3\DNP-1\DNP Assignments\Server\CLI\obj\Debug\net10.0\CLI.AssemblyInfoInputs.cache
+D:\VIA university\Software engineering\Semester 3\DNP-1\DNP Assignments\Server\CLI\obj\Debug\net10.0\CLI.AssemblyInfo.cs
+D:\VIA university\Software engineering\Semester 3\DNP-1\DNP Assignments\Server\CLI\obj\Debug\net10.0\CLI.csproj.CoreCompileInputs.cache
+D:\VIA university\Software engineering\Semester 3\DNP-1\DNP Assignments\Server\CLI\obj\Debug\net10.0\CLI.sourcelink.json

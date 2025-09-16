@@ -1,0 +1,38 @@
+using RepositoryContracts;
+using Entities;
+
+namespace CLI;
+
+public class CreatePostView
+{
+    private readonly IPostRepository _posts;
+
+    public CreatePostView(IPostRepository posts) => _posts = posts;
+
+    public async Task ShowAsync()
+    {
+        Console.Write("Title: ");
+        var title = (Console.ReadLine() ?? "").Trim();
+
+        Console.Write("Body: ");
+        var body = (Console.ReadLine() ?? "").Trim();
+
+        Console.Write("User ID: ");
+        if (!int.TryParse(Console.ReadLine(), out var userId))
+        {
+            Console.WriteLine("Invalid user id.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            Console.WriteLine("Title is required.");
+            return;
+        }
+
+        var post = new Post { Title = title, Body = body, UserId = userId };
+        post = await _posts.AddAsync(post);
+        Console.WriteLine($" Post created with ID {post.Id}");
+    }
+}
+

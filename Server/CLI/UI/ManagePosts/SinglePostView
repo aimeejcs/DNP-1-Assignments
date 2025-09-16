@@ -1,0 +1,52 @@
+using RepositoryContracts;
+
+namespace CLI;
+
+public class SinglePostView
+{
+    private readonly IPostRepository _posts;
+    private readonly ICommentRepository _comments;
+
+    public SinglePostView(IPostRepository posts, ICommentRepository comments)
+    {
+        _posts = posts;
+        _comments = comments;
+    }
+
+    public async Task ShowAsync()
+    {
+        Console.Write("Enter post ID: ");
+        if (!int.TryParse(Console.ReadLine(), out var id))
+        {
+            Console.WriteLine("Invalid number.");
+            return;
+        }
+
+        try
+        {
+            var post = await _posts.GetSingleAsync(id);
+
+            Console.WriteLine($"\n--- Post {post.Id} ---");
+            Console.WriteLine($"Title: {post.Title}");
+            Console.WriteLine($"Body : {post.Body}\n");
+
+            var postComments = _comments.GetManyAsync()
+                                        .Where(c => c.PostId == id)
+                                        .ToList();
+
+            Console.WriteLine("--- Comments ---");
+            if (postComments.Count == 0)
+            {
+                Console.WriteLine("(no comments)");
+                return;
+            }
+
+            foreach (var c in postComments)
+                Console.WriteLine($"- {c.Body} (user {c.UserId}, id {c.Id})");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Post not found or error: {ex.Message}");
+        }
+    }
+}

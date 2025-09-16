@@ -1,0 +1,81 @@
+using RepositoryContracts;
+using Entities;
+
+namespace CLI;
+
+public class ManagePostsView
+{
+    private readonly IPostRepository _posts;
+    private readonly ICommentRepository _comments;
+
+    public ManagePostsView(IPostRepository posts, ICommentRepository comments)
+    {
+        _posts = posts;
+        _comments = comments;
+    }
+
+    public async Task ShowAsync()
+    {
+        while (true)
+        {
+            Console.WriteLine("\n--- Posts ---");
+            Console.WriteLine("1) Create post");
+            Console.WriteLine("2) List posts (overview)");
+            Console.WriteLine("3) View single post (with comments)");
+            Console.WriteLine("4) Add comment to a post");
+            Console.WriteLine("0) Back");
+            Console.Write("Choose: ");
+            var choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    await new CreatePostView(_posts).ShowAsync();
+                    break;
+                case "2":
+                    await new ListPostsView(_posts).ShowAsync();
+                    break;
+                case "3":
+                    await new SinglePostView(_posts, _comments).ShowAsync();
+                    break;
+                case "4":
+                    await AddCommentAsync();
+                    break;
+                case "0":
+                    return;
+                default:
+                    Console.WriteLine("Invalid option.");
+                    break;
+            }
+        }
+    }
+
+    private async Task AddCommentAsync()
+    {
+        Console.Write("Post ID: ");
+        if (!int.TryParse(Console.ReadLine(), out var postId))
+        {
+            Console.WriteLine("Invalid post id.");
+            return;
+        }
+
+        Console.Write("User ID: ");
+        if (!int.TryParse(Console.ReadLine(), out var userId))
+        {
+            Console.WriteLine("Invalid user id.");
+            return;
+        }
+
+        Console.Write("Comment: ");
+        var body = (Console.ReadLine() ?? "").Trim();
+        if (string.IsNullOrWhiteSpace(body))
+        {
+            Console.WriteLine("Comment cannot be empty.");
+            return;
+        }
+
+        var comment = new Comment { Body = body, UserId = userId, PostId = postId };
+        comment = await _comments.AddAsync(comment);
+        Console.WriteLine($" Comment added (ID {comment.Id})");
+    }
+}
