@@ -1,5 +1,6 @@
 using RepositoryContracts;
-namespace CLI;
+
+namespace CLI.UI;
 
 public class CliApp
 {

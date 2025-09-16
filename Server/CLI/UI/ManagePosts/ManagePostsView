@@ -1,7 +1,7 @@
 using RepositoryContracts;
 using Entities;
 
-namespace CLI;
+namespace CLI.UI;
 
 public class ManagePostsView
 {
