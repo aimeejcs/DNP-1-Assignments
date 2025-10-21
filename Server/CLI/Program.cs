@@ -12,9 +12,9 @@ public class Program
     public static async Task Main(string[] args)
     {
         
-        IUserRepository userRepo    = new InMemoryUserRepository();
-        IPostRepository postRepo    = new InMemoryPostRepository();
-        ICommentRepository commentRepo = new InMemoryCommentRepository();
+        IUserRepository userRepo    = new UserInMemoryRepository();
+        IPostRepository postRepo    = new PostInMemoryRepository();
+        ICommentRepository commentRepo = new CommentInMemoryRepository();
 
         
         var u1 = await userRepo.AddAsync(new User { UserName = "john", Password = "1234" });

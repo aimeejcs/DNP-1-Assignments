@@ -1,5 +1,7 @@
 using RepositoryContracts;
 
+
+
 namespace CLI.UI;
 
 public class CliApp
@@ -29,10 +31,10 @@ public class CliApp
             switch (choice)
             {
                 case "1":
-                    await new ManageUsersView(_userRepo).ShowAsync();
+                   await new global::CLI.UI.ManageUsers.ManageUsersView(_userRepo).ShowAsync();
                     break;
                 case "2":
-                    await new ManagePostsView(_postRepo, _commentRepo).ShowAsync();
+                    await await new global::CLI.UI.ManagePosts.ManagePostsView(_postRepo, _commentRepo).ShowAsync();
                     break;
                 case "0":
                     return;

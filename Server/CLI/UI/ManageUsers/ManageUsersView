@@ -1,6 +1,7 @@
 using RepositoryContracts;
+using Entities;
 
-namespace CLI.UI;
+namespace CLI.UI.ManageUsers;
 
 public class ManageUsersView
 {
@@ -35,4 +36,6 @@ public class ManageUsersView
             }
         }
     }
+    #error TEST: this file is compiled
 }
+#error TEST: this file is compiled

@@ -1,6 +1,6 @@
 using RepositoryContracts;
 
-namespace CLI.UI;
+namespace CLI.UI.ManagePosts;
 
 public class ListPostsView
 {
