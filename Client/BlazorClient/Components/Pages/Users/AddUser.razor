@@ -1,0 +1,61 @@
+﻿@page "/users/new"
+@inject IUserService UserService
+@inject NavigationManager Navigation
+
+<button class="btn btn-secondary mb-3" @onclick="GoBack">← Back</button>
+
+<h3>Create User</h3>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <p style="color: red;">@ErrorMessage</p>
+}
+
+@if (!string.IsNullOrEmpty(SuccessMessage))
+{
+    <p style="color: green;">@SuccessMessage</p>
+}
+
+<div>
+    <label>Username:</label>
+    <input @bind="UserName" />
+</div>
+
+<div>
+    <label>Password:</label>
+    <input type="password" @bind="Password" />
+</div>
+
+<button @onclick="CreateUser">Create</button>
+
+@code {
+    private string UserName = "";
+    private string Password = "";
+    private string? ErrorMessage;
+    private string? SuccessMessage;
+    private void GoBack()
+    {
+         Navigation.NavigateTo("/");
+    }
+    private async Task CreateUser()
+    {
+        try
+        {
+            SuccessMessage = null;
+            ErrorMessage = null;
+
+            var dto = new CreateUserDto
+            {
+                UserName = UserName,
+                Password = Password
+            };
+
+            var created = await UserService.AddUserAsync(dto);
+            SuccessMessage = $"User created with ID = {created.Id}";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+}

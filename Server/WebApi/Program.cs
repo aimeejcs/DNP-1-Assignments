@@ -15,9 +15,8 @@ builder.Services.AddSwaggerGen();
 
 // Dependency Injection — use your InMemory repositories
 builder.Services.AddSingleton<IUserRepository, UserInMemoryRepository>();
-// Add these when you show me their interfaces later:
-//// builder.Services.AddSingleton<IPostRepository, InMemoryPostRepository>();
-//// builder.Services.AddSingleton<ICommentRepository, InMemoryCommentRepository>();
+builder.Services.AddSingleton<IPostRepository, PostInMemoryRepository>();
+builder.Services.AddSingleton<ICommentRepository, CommentInMemoryRepository>();
 
 var app = builder.Build();
 

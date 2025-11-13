@@ -1,0 +1,53 @@
+﻿@page "/posts/new"
+@inject IPostService PostService
+@inject NavigationManager Nav
+<button class="btn btn-secondary mb-3" @onclick="GoBack">← Back</button>
+<h3>Create New Post</h3>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <p style="color:red">@ErrorMessage</p>
+}
+
+<div>
+    <label>Title:</label>
+    <input @bind="Title" />
+</div>
+
+<div>
+    <label>Body:</label><br />
+    <textarea rows="5" cols="60" @bind="Body"></textarea>
+</div>
+
+<button @onclick="Create">Create</button>
+
+@code {
+    private string Title = "";
+    private string Body = "";
+    private string? ErrorMessage;
+private void GoBack()
+{
+    Nav.NavigateTo("/");
+}
+
+    private async Task Create()
+    {
+        try
+        {
+            var dto = new CreatePostDto
+            {
+                Title = Title,
+                Body = Body,
+                AuthorId = 1 // per assignment instructions
+            };
+
+            var created = await PostService.CreatePostAsync(dto);
+
+            Nav.NavigateTo($"/posts/{created.Id}");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+}

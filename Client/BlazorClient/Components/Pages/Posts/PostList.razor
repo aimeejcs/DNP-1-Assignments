@@ -1,0 +1,42 @@
+﻿@page "/posts"
+@rendermode InteractiveServer
+@inject IPostService PostService
+@inject NavigationManager Navigation
+
+<button class="btn btn-secondary" @onclick="GoBack">← Back</button>
+
+<h3>All Posts</h3>
+
+@if (posts == null)
+{
+    <p>Loading...</p>
+}
+else if (!posts.Any())
+{
+    <p>No posts found.</p>
+}
+else
+{
+    <ul>
+        @foreach (var p in posts)
+        {
+            <li>
+                <a href="/posts/@p.Id">@p.Title</a> (by @p.AuthorName)
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private IEnumerable<PostDto>? posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        posts = await PostService.GetPostsAsync();
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/", forceLoad: false);
+    }
+}

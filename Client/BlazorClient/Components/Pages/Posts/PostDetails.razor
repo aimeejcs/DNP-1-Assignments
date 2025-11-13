@@ -1,0 +1,95 @@
+﻿@page "/posts/{Id:int}"
+@inject IPostService PostService
+@inject ICommentService CommentService
+@inject NavigationManager Navigation
+
+<button class="btn btn-secondary mb-3" @onclick="GoBack">← Back</button>
+
+
+<h3>Post Details</h3>
+
+@if (post == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h2>@post.Title</h2>
+    <p><strong>Author:</strong> @post.AuthorName</p>
+    <p>@post.Body</p>
+
+    <h3>Comments</h3>
+
+    @if (comments == null)
+    {
+        <p>Loading comments...</p>
+    }
+    else if (!comments.Any())
+    {
+        <p>No comments yet.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var c in comments)
+            {
+                <li><strong>@c.AuthorName:</strong> @c.Body</li>
+            }
+        </ul>
+    }
+
+    <h3>Add a Comment</h3>
+
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <p style="color:red">@ErrorMessage</p>
+    }
+
+    <textarea rows="4" cols="40" @bind="NewComment"></textarea>
+    <br />
+    <button @onclick="AddComment">Submit Comment</button>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private PostDto? post;
+    private IEnumerable<CommentDto>? comments;
+
+    private string NewComment = "";
+    private string? ErrorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        post = await PostService.GetPostByIdAsync(Id);
+        comments = await CommentService.GetCommentsForPostAsync(Id);
+    }
+private void GoBack()
+{
+    Navigation.NavigateTo("/");
+}
+
+    private async Task AddComment()
+    {
+        try
+        {
+            ErrorMessage = null;
+
+            var dto = new CreateCommentDto
+            {
+                Body = NewComment,
+                PostId = Id,
+                AuthorId = 1 // per assignment
+            };
+
+            await CommentService.CreateCommentAsync(dto);
+
+            NewComment = "";
+            comments = await CommentService.GetCommentsForPostAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+}
