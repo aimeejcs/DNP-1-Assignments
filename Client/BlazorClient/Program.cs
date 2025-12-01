@@ -1,44 +1,30 @@
-using BlazorClient.Components;
-using BlazorClient.HttpServices;
 using BlazorClient.Auth;
+using BlazorClient.HttpServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Razor Components
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Your API Base URL (Server/WebApi is running on http://localhost:5045)
+// API Base URL
 string apiBaseUrl = "http://localhost:5045/";
-Console.WriteLine("[DEBUG] API Base URL = " + apiBaseUrl);
+builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(apiBaseUrl) });
 
-// Configure HttpClient for API calls
-builder.Services.AddScoped(sp => new HttpClient
-{
-    BaseAddress = new Uri(apiBaseUrl)
-});
-
-// Register HTTP Services
+// Register Http services
 builder.Services.AddScoped<IUserService, HttpUserService>();
 builder.Services.AddScoped<IPostService, HttpPostService>();
 builder.Services.AddScoped<ICommentService, HttpCommentService>();
-builder.Services.AddScoped<SimpleAuthProvider>();
 
+// Register Authentication
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthProvider>();
+
+builder.Services.AddAuthorizationCore();
 
 var app = builder.Build();
 
-// Middleware pipeline
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    app.UseHsts();
-}
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseAntiforgery();
-
-// Setup Razor components
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

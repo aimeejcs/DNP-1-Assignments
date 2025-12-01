@@ -1,0 +1,44 @@
+﻿@page "/login"
+@inject IAuthService Auth
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider AuthProvider
+
+<h3>Login</h3>
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <p class="text-danger">@error</p>
+}
+
+<div class="mb-3">
+    <label>Username:</label>
+    <input @bind="username" class="form-control" />
+</div>
+
+<div class="mb-3">
+    <label>Password:</label>
+    <input type="password" @bind="password" class="form-control" />
+</div>
+
+<button class="btn btn-primary" @onclick="Login">Login</button>
+
+@code {
+    string username = "";
+    string password = "";
+    string? error;
+
+    private async Task Login()
+    {
+        var user = await Auth.LoginAsync(username, password);
+
+        if (user == null)
+        {
+            error = "Invalid username or password";
+            return;
+        }
+
+        (AuthProvider as SimpleAuthProvider)?.NotifyAuthChanged();
+
+        Nav.NavigateTo("/");
+    }
+}

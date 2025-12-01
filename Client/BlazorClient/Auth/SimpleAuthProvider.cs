@@ -1,53 +1,37 @@
 using ApiContracts;
+using Microsoft.AspNetCore.Components.Authorization;
+using System.Security.Claims;
 
 namespace BlazorClient.Auth;
 
-public class SimpleAuthProvider
+public class SimpleAuthProvider : AuthenticationStateProvider
 {
-    private readonly HttpClient _client;
+    private readonly IAuthService authService;
 
-    public bool IsLoggedIn => CurrentUser != null;
-    public LoginResponse? CurrentUser { get; private set; }
-
-    public SimpleAuthProvider(HttpClient client)
+    public SimpleAuthProvider(IAuthService authService)
     {
-        _client = client;
+        this.authService = authService;
     }
 
-    public async Task<bool> LoginAsync(string username, string password)
+    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var request = new LoginRequest
+        var user = await authService.GetCurrentUserAsync();
+
+        if (user == null)
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+
+        var claims = new[]
         {
-            Username = username,
-            Password = password
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
         };
 
-        var response = await _client.PostAsJsonAsync("auth/login", request);
-
-        if (!response.IsSuccessStatusCode)
-            return false;
-
-        CurrentUser = await response.Content.ReadFromJsonAsync<LoginResponse>();
-        return true;
+        var identity = new ClaimsIdentity(claims, "custom");
+        return new AuthenticationState(new ClaimsPrincipal(identity));
     }
 
-    public async Task LogoutAsync()
+    public void NotifyAuthChanged()
     {
-        await _client.PostAsync("auth/logout", null);
-        CurrentUser = null;
-    }
-
-    public async Task<bool> CheckSessionAsync()
-    {
-        var response = await _client.GetAsync("auth/me");
-
-        if (!response.IsSuccessStatusCode)
-        {
-            CurrentUser = null;
-            return false;
-        }
-
-        CurrentUser = await response.Content.ReadFromJsonAsync<LoginResponse>();
-        return true;
+        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 }
